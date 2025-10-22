@@ -1,4 +1,4 @@
-﻿﻿//Copyright 2015 Guadmaz
+﻿//Copyright 2015 Guadmaz
 //Do not redistribute this project without my permission.
 //Contact me at rockeurp@gmail.com
 
@@ -45,7 +45,7 @@ class Vigilante : Script
         new Model(VehicleHash.Tailgater)
     };
 
-    private int _seconds;
+    private int _seconds;  //(UNCOMMENT THIS IF NOT WORKING)
     private int _tick;
 
     public Vigilante()
@@ -60,8 +60,8 @@ class Vigilante : Script
         //Function.Call(Hash.ADD_RELATIONSHIP_GROUP, "CRIMINALS_MOD", outArg);
         //CriminalGroup = outArg.GetResult<int>();
         
-        _headsup = new UIText("Level: ~b~" + _level, new Point(2, 325), 0.7f, Color.WhiteSmoke, 1, false);
-        _headsupRectangle = new UIRectangle(new Point(0, 320), new Size(200, 110), Color.FromArgb(100, 0, 0, 0));
+        _headsup = new UIText("Level: ~b~" + _level, new Point(2, 325), 0.7f, Color.WhiteSmoke, GTA.Font.HouseScript, false);
+        _headsupRectangle = new UIRectangle(new Point(0, 320), new Size(200, 85), Color.FromArgb(100, 0, 0, 0));
 
         //World.SetRelationshipBetweenGroups(Relationship.Hate, CriminalGroup, PlayerGroup);
     }
@@ -80,7 +80,6 @@ class Vigilante : Script
             {
                 if (!_spotted)
                 {
-                    _seconds--;
                     _tick = 0;
                 }
             }
@@ -91,7 +90,7 @@ class Vigilante : Script
             //FUTURE
             _headsup.Caption = "Level: ~b~" + _level;
             if (!_spotted)
-                _headsup.Caption += "~w~\nStart Chase: ~b~" + ParseTime(_seconds);
+                //_headsup.Caption += "~w~\nStart Chase: ~b~" + ParseTime(_seconds); // START CHASE TEXT
             _headsup.Caption += "~w~\nKills: ~b~" + _kills; 
             
             _headsup.Draw();
@@ -120,8 +119,8 @@ class Vigilante : Script
                             SpookCriminal();
                             //int secsadded = _rndGet.Next(60, 200);
                             //BigMessage.ShowMessage("~b~" + secsadded + " ~w~seconds added", 200, Color.White, 1.0f);
-                            _seconds = 180;
-                            UI.Notify("Good job officer! You've completed this level.");
+                            _seconds = 1800;
+                            UI.Notify("Good job! You've completed this level.");
                             StartMissions();
                         }
                     }
@@ -136,6 +135,33 @@ class Vigilante : Script
                                     SpookCriminal(i);
                                 }
                             }
+
+                            // NEWLY ADDED: Spook criminal trigger chase by ramming
+
+                            if (player.IsInVehicle() && _criminals[i].IsInVehicle())
+                            {
+                                Vehicle crimVeh = _criminals[i].CurrentVehicle;
+                                Vehicle playerVeh = player.CurrentVehicle;
+
+                                // 1) Native check: was the criminal vehicle damaged by the player's vehicle?
+                                bool damagedByPlayer = Function.Call<bool>(Hash.HAS_ENTITY_BEEN_DAMAGED_BY_ENTITY, crimVeh.Handle, playerVeh.Handle, true);
+
+                                // 2) Optional velocity-impact check to reduce false positives from tiny touches:
+                                //    compute relative forward speed (simple heuristic)
+                                float relSpeed = Math.Abs(playerVeh.Speed - crimVeh.Speed); // speed in m/s
+                                bool highImpact = relSpeed > 10.0f && (player.Position - crimVeh.Position).Length() < 12.0f; // tweak 10.0f/12.0f to taste
+
+                                if ((damagedByPlayer || highImpact) && !_spotted)
+                                {
+                                    // Trigger the same spook behaviour you already use
+                                    SpookCriminal(i);
+
+                                    // Optional: clear damage state so the same collision doesn't retrigger repeatedly
+                                    // (some natives exist to clear damage flags; if you see spurious repeats, you can try one)
+                                    // Function.Call(Hash.CLEAR_ENTITY_LAST_DAMAGE_ENTITY, crimVeh.Handle); // optional, may not exist in all versions
+                                }
+                            }
+
 
                             if ((player.Position - _criminals[i].Position).Length() < 50.0f && _criminals[i].CurrentVehicle.Speed < 1.0f && _spotted)
                             {
@@ -198,12 +224,14 @@ class Vigilante : Script
         {
             if (!_tmpWorkaround)
             {
-                _criminalGroup = World.AddRelationShipGroup("CRIMINALS_MOD"); //Wont work
+                OutputArgument outArg = new OutputArgument();
+                Function.Call(Hash.ADD_RELATIONSHIP_GROUP, "CRIMINALS_MOD", outArg);
+                _criminalGroup = outArg.GetResult<int>();
                 _tmpWorkaround = true;
             }
-            if (!_onMission && IsInPoliceCar())
+            if (!_onMission && Game.Player.Character.IsInVehicle())
             {
-                _seconds = 180;
+                _seconds = 1800;
                 StartMissions();
                 BigMessage.ShowMessage("Vigilante", 300, Color.Goldenrod);
             }
@@ -318,7 +346,7 @@ class Vigilante : Script
         _spotted = false;
         UI.ShowSubtitle("Eliminate the ~r~suspects~w~.", 10000);
         Ped player = Game.Player.Character;
-        _headsupRectangle.Size = new Size(200, 110);
+        _headsupRectangle.Size = new Size(200, 85);
         
         for (int i = 1; i <= Math.Ceiling((decimal)_level/4); i++)
         {
@@ -372,8 +400,8 @@ class Vigilante : Script
                 for (int d = 0; d < maxPasseng; d++)
                 {
                     Ped tmpPed = Function.Call<Ped>(Hash.CREATE_RANDOM_PED, pedSpawnPoint.X, pedSpawnPoint.Y, pedSpawnPoint.Z);
-                    var gunid = _level > _weaponList.Length ? _weaponList[_rndGet.Next(0, _weaponList.Length)] : _weaponList[_rndGet.Next(0, _level)];                 
-                    tmpPed.Weapons.Give(gunid, 999, true, true); 
+                    var gunid = _level > _weaponList.Length ? _weaponList[_rndGet.Next(0, _weaponList.Length)] : _weaponList[_rndGet.Next(0, _level)];
+                    tmpPed.Weapons.Give(gunid, 999, true, true);
                     if (d == 0)
                         Function.Call(Hash.SET_PED_INTO_VEHICLE, tmpPed.Handle, tmpVeh.Handle, -1); //-1 driver, -2 any
                     else
@@ -417,7 +445,7 @@ class Vigilante : Script
         _level = 1;
         _kills = 0;
         _spotted = false;
-        _seconds = 180;
+        _seconds = 1800;
         UI.ShowSubtitle("");
         foreach (var item in _criminalBlips)
             item.Remove();
