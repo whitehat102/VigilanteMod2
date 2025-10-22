@@ -1,9 +1,9 @@
-﻿using System.Drawing;
+using System.Drawing;
 using GTA;
 
 class BigMessage
 {
-    private static UIText _bigmessage = new UIText("VIGILANTE", new Point(630, 100), 2.5f, Color.Goldenrod, 2, true);
+    private static UIText _bigmessage = new UIText("VIGILANTE", new Point(630, 100), 2.5f, Color.Goldenrod, GTA.Font.ChaletLondon, true);
     private static int _ticks;
     private static int _timer;
     private static bool _showMessage;
