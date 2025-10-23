@@ -3,6 +3,14 @@
 - All vehicle types supported
 - Chase starts by approaching or ramming suspects (siren or gunshots now only optional)
 
+**Installation**
+- Make sure you have both the Microsoft .NET Framework 4.5 and the Microsoft Visual C++ Redistributable Package (x64) installed.
+- Download and install Script Hook V (including the ASI loader).
+- Download the latest Script Hook V .NET from github and copy the ASI into your game folder.
+- Download the MOD file (Vigilante.dll) from the release page: https://github.com/whitehat102/VigilanteMod2/releases/tag/VigilanteMod2
+- Extract the provided Vigilante.dll to /Grand Theft Auto V/scripts/
+- If that folder does not exists, make one.
+
 **Introduction:**
 This mod brings back the loved Vigilante missions from GTA:San Andreas (and others). In a similar way, you will have to chase around suspects and 'neutralise' them.
 The difficulty climbs as you progress through the levels! As does the pay too, so you can gain some side-cash!
@@ -11,10 +19,4 @@ You have 3 minutes to start the chase, after that there's no limit. To start the
 
 Note: if you have trouble getting the enemies load, try to restart the missions. If that doesn't help, press Insert to reload the mod.
 
-**Installation**
-- Make sure you have both the Microsoft .NET Framework 4.5 and the Microsoft Visual C++ Redistributable Package (x64) installed.
-- Download and install Script Hook V (including the ASI loader).
-- Download the latest Script Hook V .NET from github and copy the ASI into your game folder.
-- Download the Vigilante.dll from the release page: https://github.com/whitehat102/VigilanteMod2/releases/tag/VigilanteMod2
-- Extract the provided Vigilante.dll to /Grand Theft Auto V/scripts/
-- If that folder does not exists, make one.
+
