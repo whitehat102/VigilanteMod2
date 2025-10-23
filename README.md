@@ -1,7 +1,7 @@
 **NEW FEATURES**
-- "Start Chase" timer increased to 30 mins 
+- Removed "Start Chase" timer
 - All vehicle types supported
-- Chase starts by approaching or ramming suspects—no siren or gunshots required
+- Chase starts by approaching or ramming suspects (siren or gunshots now only optional)
 
 **Introduction:**
 This mod brings back the loved Vigilante missions from GTA:San Andreas (and others). In a similar way, you will have to chase around suspects and 'neutralise' them.
